@@ -1,11 +1,15 @@
 from contextlib import asynccontextmanager
+from typing import AsyncGenerator
 
 from .api.v1 import invoice, webhook
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from telegram import Bot
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from .core.config import Settings
+from .db.session import engine, Base, get_async_session
+
 
 
 async def set_webhook(bot: Bot, webhook_secret: str):
@@ -14,11 +18,14 @@ async def set_webhook(bot: Bot, webhook_secret: str):
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     settings = Settings()  # type: ignore
     app.state.bot = Bot(token=settings.TG_TOKEN)
     await set_webhook(app.state.bot, settings.WEBHOOK_SECRET)
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
     yield
+    await engine.dispose()
 
 
 app = FastAPI(lifespan=lifespan)
@@ -36,4 +43,8 @@ app.include_router(webhook.router)
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"status": "ok"}
+
+@app.post("/")
+async def db_access(db: AsyncSession = Depends(get_async_session)):
+    return {"status": "ok"}
