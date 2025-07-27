@@ -11,8 +11,11 @@ class ItemBase(BaseModel):
 class ItemCreate(ItemBase):
     pass
 
-class ItemResponse(ItemBase):
+class Item(ItemBase):
     item_id: uuid.UUID
 
     class Config:
         from_attributes = True
+
+class ItemResponse(Item):
+    pass
