@@ -8,8 +8,8 @@ class InvoiceBase(BaseModel):
     invoice_payload: str
 
 
-class Invoice(InvoiceBase):
+class InvoiceResponse(InvoiceBase):
     invoice_id: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True

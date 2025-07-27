@@ -1,7 +1,6 @@
 from sqlalchemy import Column, BigInteger, String
-from sqlalchemy.orm import declarative_base, relationship
-
-Base = declarative_base()
+from sqlalchemy.orm import relationship
+from app.db.session import Base
 
 class User(Base):
     __tablename__ = 'user'

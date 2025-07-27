@@ -1,8 +1,8 @@
 from sqlalchemy import Column, ForeignKey, UUID, BigInteger, TIMESTAMP, func
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.orm import relationship
+from app.db.session import Base
 import uuid
 
-Base = declarative_base()
 
 class Order(Base):
     __tablename__ = 'order'

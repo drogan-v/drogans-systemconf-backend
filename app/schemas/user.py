@@ -7,8 +7,11 @@ class UserBase(BaseModel):
     username: str | None = None
 
 
-class User(UserBase):
+class UserCreate(UserBase):
+    pass
+
+class UserResponse(UserBase):
     user_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True

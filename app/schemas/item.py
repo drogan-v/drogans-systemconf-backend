@@ -1,5 +1,5 @@
-from pydantic import BaseModel
-from uuid import UUID
+from pydantic import BaseModel, Field
+import uuid
 from decimal import Decimal
 
 
@@ -8,9 +8,11 @@ class ItemBase(BaseModel):
     item_price: Decimal
     item_description: str | None = None
 
+class ItemCreate(ItemBase):
+    pass
 
-class Item(ItemBase):
-    item_id: UUID
+class ItemResponse(ItemBase):
+    item_id: uuid.UUID
 
     class Config:
-        orm_mode = True
+        from_attributes = True

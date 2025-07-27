@@ -9,9 +9,11 @@ class OrderItemBase(BaseModel):
     order_item_quantity: int
     order_item_price: Decimal
 
+class OrderItemCreate(OrderItemBase):
+    pass
 
-class OrderItem(OrderItemBase):
+class OrderItemResponse(OrderItemBase):
     order_item_id: UUID
 
     class Config:
-        orm_mode = True
+        from_attributes = True
