@@ -6,8 +6,6 @@ class InvoiceBase(BaseModel):
     currency: str
     total_amount: int
     invoice_payload: str
-    shipping_option_id: str | None = None
-    order_info_id: str | None = None
 
 
 class Invoice(InvoiceBase):
