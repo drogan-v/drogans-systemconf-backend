@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
-from .api.v1 import invoice, webhook, item, order_item
+from .api.v1 import invoice, webhook, item, order
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from telegram import Bot
@@ -9,7 +9,11 @@ from telegram import Bot
 from .core.config import Settings
 from .db.session import engine, Base
 
-
+from .db.models.item import Item
+from .db.models.user import User
+from .db.models.order import Order
+from .db.models.order_item import OrderItem
+from .db.models.invoice import Invoice
 
 async def set_webhook(bot: Bot, webhook_secret: str):
     webhook_url = "https://g40sl192-8000.euw.devtunnels.ms/webhook"
@@ -39,6 +43,7 @@ app.add_middleware(
 app.include_router(invoice.router)
 app.include_router(webhook.router)
 app.include_router(item.router)
+app.include_router(order.router)
 
 @app.get("/")
 async def root():

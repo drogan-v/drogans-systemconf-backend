@@ -12,8 +12,11 @@ class OrderItemBase(BaseModel):
 class OrderItemCreate(OrderItemBase):
     pass
 
-class OrderItemResponse(OrderItemBase):
+class OrderItem(OrderItemBase):
     order_item_id: UUID
 
     class Config:
         from_attributes = True
+
+class OrderItemResponse(OrderItem):
+    pass

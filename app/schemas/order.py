@@ -9,9 +9,12 @@ class OrderBase(BaseModel):
 class OrderCreate(OrderBase):
     pass
 
-class OrderResponse(OrderBase):
+class Order(OrderBase):
     order_id: UUID
     created_at: datetime
 
     class Config:
         from_attributes = True
+
+class OrderResponse(Order):
+    pass
