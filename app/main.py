@@ -1,17 +1,16 @@
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
-from fastapi import Depends, FastAPI
+from fastapi import FastAPI
 from .api.v1 import invoice, webhook, item, order, order_item, user
 from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.ext.asyncio import AsyncSession
 from telegram import Bot
 
 from .core.config import Settings
 from sqladmin import Admin
 from app.admin import OrderAdmin, ItemAdmin, UserAdmin, OrderItemAdmin
 
-from .db.session import Base, engine, get_async_session
+from .db.session import Base, engine
 
 
 from .db.models.item import Item #type: ignore
@@ -59,8 +58,4 @@ admin.add_view(UserAdmin)
 
 @app.get("/")
 async def root():
-    return {"status": "ok"}
-
-@app.post("/")
-async def db_access(db: AsyncSession = Depends(get_async_session)):
     return {"status": "ok"}
