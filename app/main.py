@@ -13,7 +13,6 @@ from .db.models.item import Item #type: ignore
 from .db.models.user import User #type: ignore
 from .db.models.order import Order #type: ignore
 from .db.models.order_item import OrderItem #type: ignore
-from .db.models.invoice import Invoice #type: ignore
 
 async def set_webhook(bot: Bot, webhook_secret: str):
     webhook_url = "https://g40sl192-8000.euw.devtunnels.ms/webhook"
