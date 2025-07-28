@@ -8,7 +8,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from telegram import Bot
 
 from .core.config import Settings
+from sqladmin import Admin
+from app.admin import OrderAdmin, ItemAdmin, UserAdmin, OrderItemAdmin
+
 from .db.session import Base, engine, get_async_session
+
 
 from .db.models.item import Item #type: ignore
 from .db.models.user import User #type: ignore
@@ -47,6 +51,11 @@ app.include_router(item.router)
 app.include_router(invoice.router)
 app.include_router(webhook.router)
 
+admin = Admin(app, engine, title="Admin Panel")
+admin.add_view(ItemAdmin)
+admin.add_view(OrderItemAdmin)
+admin.add_view(OrderAdmin)
+admin.add_view(UserAdmin)
 
 @app.get("/")
 async def root():
