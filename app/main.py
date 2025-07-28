@@ -8,6 +8,8 @@ from telegram import Bot
 
 from .core.config import Settings
 from .db.session import engine, Base
+from sqladmin import Admin
+from app.admin import OrderAdmin, ItemAdmin, UserAdmin, OrderItemAdmin
 
 from .db.models.item import Item #type: ignore
 from .db.models.user import User #type: ignore
@@ -45,6 +47,12 @@ app.include_router(order.router)
 app.include_router(user.router)
 app.include_router(invoice.router)
 app.include_router(webhook.router)
+
+admin = Admin(app, engine, title="Admin Panel")
+admin.add_view(ItemAdmin)
+admin.add_view(OrderItemAdmin)
+admin.add_view(OrderAdmin)
+admin.add_view(UserAdmin)
 
 @app.get("/")
 async def root():
