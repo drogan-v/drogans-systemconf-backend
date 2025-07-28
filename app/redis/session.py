@@ -1,15 +1,14 @@
-from redis.asyncio.client import Redis
-from redis.asyncio import from_url
 from typing import AsyncGenerator
+
+from redis.asyncio import from_url
+from redis.asyncio.client import Redis
 
 from app.core.config import Settings
 
 settings = Settings()  # type: ignore
 
-redis_client = from_url(
-    settings.REDIS_URL,
-    decode_responses=True
-)
+redis_client = from_url(settings.REDIS_URL, decode_responses=True)
+
 
 async def get_redis_session() -> AsyncGenerator[Redis, None]:
     """

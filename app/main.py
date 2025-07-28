@@ -2,21 +2,20 @@ from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
 from fastapi import FastAPI
-from .api.v1 import invoice, webhook, item, order, order_item, user
 from fastapi.middleware.cors import CORSMiddleware
+from sqladmin import Admin
 from telegram import Bot
 
-from .core.config import Settings
-from sqladmin import Admin
-from app.admin import OrderAdmin, ItemAdmin, UserAdmin, OrderItemAdmin
+from app.admin import ItemAdmin, OrderAdmin, OrderItemAdmin, UserAdmin
 
+from .api.v1 import invoice, item, order, order_item, user, webhook
+from .core.config import Settings
+from .db.models.item import Item  # type: ignore
+from .db.models.order import Order  # type: ignore
+from .db.models.order_item import OrderItem  # type: ignore
+from .db.models.user import User  # type: ignore
 from .db.session import Base, engine
 
-
-from .db.models.item import Item #type: ignore
-from .db.models.user import User #type: ignore
-from .db.models.order import Order #type: ignore
-from .db.models.order_item import OrderItem #type: ignore
 
 async def set_webhook(bot: Bot, webhook_secret: str):
     webhook_url = "https://g40sl192-8000.euw.devtunnels.ms/webhook"
@@ -55,6 +54,7 @@ admin.add_view(ItemAdmin)
 admin.add_view(OrderItemAdmin)
 admin.add_view(OrderAdmin)
 admin.add_view(UserAdmin)
+
 
 @app.get("/")
 async def root():
