@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Header
 from telegram import Bot, LabeledPrice
 
 from app.dependencies import telegram_bot
-from app.schemas.item import ItemResponse
+from app.schemas.item import Item
 from app.schemas.invoice import Invoice
 from app.core.config import Settings
 
@@ -15,14 +15,16 @@ router = APIRouter(prefix="", tags=["Invoice"])
 @router.post("/make_invoice")
 async def make_invoice(
     x_telegram_webapp_initdata: Annotated[str, Header()], 
-    item: ItemResponse,
+    item: Item,
     bot: Bot = Depends(telegram_bot)
 ) -> Invoice:
     settings = Settings() # type: ignore
     try:
+        print(item)
         invoice_link = await bot.create_invoice_link(
             title=item.item_name,
-            description=item.item_description if item.item_description else "",
+            # TODO: ITEM HAS NOT DESCRIPTION. FIX IT!
+            description=item.item_description if item.item_description else "fake description",
             payload=json.dumps({
                 "item_id": str(item.item_id)
             }),
