@@ -19,6 +19,7 @@ from .db.session import Base, engine
 
 async def set_webhook(bot: Bot, webhook_secret: str):
     webhook_url = "https://g40sl192-8000.euw.devtunnels.ms/webhook"
+    webhook_url = "https://w23dlflh-8000.euw.devtunnels.ms/webhook"
     await bot.set_webhook(url=webhook_url, secret_token=webhook_secret)
 
 
