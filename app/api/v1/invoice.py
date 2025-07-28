@@ -8,6 +8,7 @@ from app.dependencies import telegram_bot
 from app.schemas.item import Item
 from app.schemas.invoice import Invoice
 from app.core.config import Settings
+from app.services.init_data import init_data_is_valid
 
 router = APIRouter(prefix="", tags=["Invoice"])
 
@@ -20,7 +21,8 @@ async def make_invoice(
 ) -> Invoice:
     settings = Settings() # type: ignore
     try:
-        print(item)
+        if not init_data_is_valid(x_telegram_webapp_initdata, settings.TG_TOKEN):
+            raise Exception("Init data is invalid")
         invoice_link = await bot.create_invoice_link(
             title=item.item_name,
             # TODO: ITEM HAS NOT DESCRIPTION. FIX IT!
@@ -38,5 +40,5 @@ async def make_invoice(
             need_phone_number=True,
         )
     except Exception as e:
-        raise Exception("make invoice\n" + str(e))
+        raise Exception("make invoice: " + str(e))
     return Invoice(invoice_link=invoice_link)
