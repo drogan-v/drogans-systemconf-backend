@@ -8,6 +8,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_healthy
   db:
     image: postgres:15
     environment:
@@ -24,6 +26,24 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+  redis:
+    image: redis:7
+    restart: always
+    ports:
+      - ${REDIS_PORT}:${REDIS_PORT}
+    command: >
+      redis-server
+      --appendonly yes
+      --requirepass ${REDIS_PASSWORD}
+      --loglevel warning
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping" ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
 
 volumes:
   postgres_data:
+  redis_data:
