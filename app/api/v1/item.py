@@ -1,27 +1,47 @@
-from fastapi import APIRouter, Depends
-from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 
-from app.db.session import get_async_session
+from fastapi import APIRouter, Depends, HTTPException
+from pydantic import UUID4
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
 from app.db.models.item import Item
-from app.schemas.item import ItemResponse
-from app.core.exceptions import get_object_or_404
+from app.db.session import get_async_session
+from app.schemas.item import ItemCreate, ItemResponse
 
-router = APIRouter(prefix='', tags=["Item"])
+router = APIRouter(prefix="/item", tags=["Item"])
 
-@router.get("/items", response_model=List[ItemResponse],
-            description="Get all items", summary="Get all items")
-async def get_items(db: AsyncSession = Depends(get_async_session)):
-    result = await db.execute(select(Item))
-    items = get_object_or_404(result.scalars().all(), detail="Items not found")
-    return items
 
-@router.get("/items/{item_id}", response_model=ItemResponse,
-            description="Get item by item_id", summary="Get item")
-async def get_item(item_id: str, db: AsyncSession = Depends(get_async_session)):
-    result = await db.execute(
-        select(Item).where(Item.item_id == item_id)
+@router.post("")
+async def create_item(
+    item_create: ItemCreate, session: AsyncSession = Depends(get_async_session)
+) -> ItemResponse:
+    item = Item(
+        item_name=item_create.item_name,
+        item_price=item_create.item_price,
+        item_description=item_create.item_description,
     )
-    item = get_object_or_404(result.scalar_one_or_none(), detail="Item not found")
-    return item
+    session.add(item)
+    await session.commit()
+    return ItemResponse.model_validate(item)
+
+
+@router.get("/{item_id}")
+async def get_item(
+    item_id: UUID4, session: AsyncSession = Depends(get_async_session)
+) -> ItemResponse:
+    item = await session.get(Item, item_id)
+    if not item:
+        raise HTTPException(status_code=404, detail="Item not found")
+    return ItemResponse.model_validate(item)
+
+
+@router.get("")
+async def get_items(
+    session: AsyncSession = Depends(get_async_session),
+) -> List[ItemResponse]:
+    try:
+        result = (await session.execute(select(Item))).scalars().all()
+        return [ItemResponse.model_validate(item) for item in result]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error fetching items: {str(e)}")

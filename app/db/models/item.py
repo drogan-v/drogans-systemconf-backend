@@ -1,7 +1,7 @@
 from sqlalchemy import Column, String, UUID, DECIMAL
-from sqlalchemy.orm import relationship
 
 from app.db.session import Base
+from sqlalchemy.orm import relationship
 import uuid
 
 class Item(Base):
