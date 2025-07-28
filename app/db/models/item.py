@@ -1,5 +1,6 @@
 from sqlalchemy import Column, String, UUID, DECIMAL
 from app.db.session import Base
+from sqlalchemy.orm import relationship
 import uuid
 
 class Item(Base):
@@ -9,3 +10,5 @@ class Item(Base):
     item_name = Column(String(255), nullable=False)
     item_price = Column(DECIMAL(10, 2), nullable=False)
     item_description = Column(String(255), nullable=True)
+    
+    order_items = relationship("OrderItem", back_populates="item")

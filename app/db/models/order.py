@@ -11,5 +11,5 @@ class Order(Base):
     user_id = Column(BigInteger, ForeignKey('user.user_id'), nullable=False)
     created_at = Column(TIMESTAMP, nullable=False, server_default=func.now())
 
-    user = relationship("User", back_populates="orders")
+    user = relationship("User")
     order_items = relationship("OrderItem", back_populates="order")

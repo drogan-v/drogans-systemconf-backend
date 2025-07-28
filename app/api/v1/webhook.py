@@ -5,6 +5,7 @@ from telegram.constants import ParseMode
 
 from app.dependencies import telegram_bot
 from app.core.config import Settings
+from app.services.pre_checkout_query import save_pre_checkout_query_info
 
 router = APIRouter(prefix='', tags=["Webhook"])
 
@@ -23,8 +24,8 @@ async def webhook(
         verify_webhook(request)
         data = await request.json()
         update = Update.de_json(data, bot)
-
         if update.pre_checkout_query:
+            await save_pre_checkout_query_info(update.pre_checkout_query)
             await bot.answer_pre_checkout_query(
                 pre_checkout_query_id=update.pre_checkout_query.id,
                 ok=True,

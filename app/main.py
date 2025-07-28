@@ -1,15 +1,14 @@
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
-from .api.v1 import invoice, webhook
-from fastapi import FastAPI, Depends
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from telegram import Bot
 from sqlalchemy.ext.asyncio import AsyncSession
+from telegram import Bot
 
+from .api.v1 import invoice, item, webhook
 from .core.config import Settings
-from .db.session import engine, Base, get_async_session
-
+from .db.session import Base, engine, get_async_session
 
 
 async def set_webhook(bot: Bot, webhook_secret: str):
@@ -39,11 +38,13 @@ app.add_middleware(
 )
 app.include_router(invoice.router)
 app.include_router(webhook.router)
+app.include_router(item.router)
 
 
 @app.get("/")
 async def root():
     return {"status": "ok"}
+
 
 @app.post("/")
 async def db_access(db: AsyncSession = Depends(get_async_session)):
