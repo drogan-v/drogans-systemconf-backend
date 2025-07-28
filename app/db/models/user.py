@@ -11,4 +11,3 @@ class User(Base):
     username = Column(String(255), nullable=True)
 
     orders = relationship("Order", back_populates="user")
-    invoices = relationship("Invoice", back_populates="from_user")
