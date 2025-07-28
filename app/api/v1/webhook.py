@@ -1,24 +1,30 @@
 import hmac
+
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Request
 from telegram import Bot, Update
 from telegram.constants import ParseMode
 
-from app.dependencies import telegram_bot
 from app.core.config import Settings
+from app.dependencies import telegram_bot
 from app.services.pre_checkout_query import save_pre_checkout_query_info
 
-router = APIRouter(prefix='', tags=["Webhook"])
+router = APIRouter(prefix="", tags=["Webhook"])
 
 
 def verify_webhook(request: Request):
-    settings = Settings() # type: ignore
+    settings = Settings()  # type: ignore
     secret_token = request.headers.get("X-Telegram-Bot-Api-Secret-Token")
-    if not secret_token or not hmac.compare_digest(secret_token, settings.WEBHOOK_SECRET):
+    if not secret_token or not hmac.compare_digest(
+        secret_token, settings.WEBHOOK_SECRET
+    ):
         raise HTTPException(403, "Invalid secret token")
+
 
 @router.post("/webhook")
 async def webhook(
-    request: Request, background_tasks: BackgroundTasks, bot: Bot = Depends(telegram_bot)
+    request: Request,
+    background_tasks: BackgroundTasks,
+    bot: Bot = Depends(telegram_bot),
 ):
     try:
         verify_webhook(request)

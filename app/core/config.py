@@ -1,6 +1,7 @@
+from pathlib import Path
+
 from pydantic import Field
 from pydantic_settings import BaseSettings
-from pathlib import Path
 
 
 class Settings(BaseSettings):
@@ -25,13 +26,13 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = str(Path("__file__").cwd() / ".env")
-    
+
     def __init__(self, **data):
         super().__init__(**data)
         # Генерируем DATABASE_URL после загрузки остальных полей
         self.DATABASE_URL = self._generate_postgres_db_url()
         self.REDIS_URL = self._generate_redis_db_url()
-    
+
     def _generate_postgres_db_url(self) -> str:
         return (
             f"postgresql+asyncpg://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@"
