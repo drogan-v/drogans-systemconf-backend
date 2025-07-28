@@ -1,6 +1,5 @@
 import json
 
-from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from telegram import OrderInfo, PreCheckoutQuery
 from telegram import User as TgUser

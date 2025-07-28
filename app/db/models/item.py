@@ -10,7 +10,7 @@ from app.db.session import Base
 class Item(Base):
     __tablename__ = "item"
 
-    item_id: Mapped[str] = mapped_column(
+    item_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), primary_key=True, default=uuid.uuid4
     )
     item_name: Mapped[str] = mapped_column(String(255), nullable=False)

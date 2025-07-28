@@ -35,7 +35,7 @@ async def webhook(
             await bot.answer_pre_checkout_query(
                 pre_checkout_query_id=update.pre_checkout_query.id,
                 ok=True,
-                error_message="Херово",
+                error_message="Bad :(",
             )
 
         if update.message and update.message.successful_payment:

@@ -5,6 +5,8 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.session import Base
 
+from decimal import Decimal
+
 
 class OrderItem(Base):
     __tablename__ = "order_item"
@@ -18,8 +20,8 @@ class OrderItem(Base):
     item_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True), ForeignKey("item.item_id"), nullable=False
     )
-    order_item_quantity: Mapped[uuid.UUID] = mapped_column(Integer, nullable=False)
-    order_item_price: Mapped[uuid.UUID] = mapped_column(DECIMAL(10, 2), nullable=False)
+    order_item_quantity: Mapped[int] = mapped_column(Integer, nullable=False)
+    order_item_price: Mapped[Decimal] = mapped_column(DECIMAL(10, 2), nullable=False)
 
     order = relationship("Order", back_populates="order_items")
     item = relationship("Item", back_populates="order_items")
