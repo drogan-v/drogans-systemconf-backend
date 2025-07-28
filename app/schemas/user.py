@@ -10,8 +10,12 @@ class UserBase(BaseModel):
 class UserCreate(UserBase):
     pass
 
-class UserResponse(UserBase):
+class User(UserBase):
     user_id: int
 
     class Config:
         from_attributes = True
+
+
+class UserResponse(User):
+    pass
