@@ -18,7 +18,7 @@ async_session_maker = async_sessionmaker(
     expire_on_commit=False
 )
 
-async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
+async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
     """
     Зависимость для получения асинхронной сессии базы данных.
     """
