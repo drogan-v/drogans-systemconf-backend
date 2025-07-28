@@ -17,5 +17,5 @@ class OrderAdmin(ModelView, model=Order):
 class OrderItemAdmin(ModelView, model=OrderItem):
     column_list = [
         OrderItem.order_item_id, OrderItem.order_id, OrderItem.item_id,
-        OrderItem.order_item_quantity, OrderItem.order_item_price,я
+        OrderItem.order_item_quantity, OrderItem.order_item_price
     ]
