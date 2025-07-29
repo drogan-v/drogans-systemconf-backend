@@ -1,26 +1,34 @@
-import json
+import secrets
+
 from typing import Sequence
 
+from redis.asyncio.client import Redis
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from telegram import Bot, LabeledPrice
 
+from app.dependencies import get_redis_session
 from app.core.config import Settings
 from app.db.models.item import Item
 from app.schemas.item import Item as ItemSchema
 
 
 async def generate_invoice_link(
-    bot: Bot, items: list[ItemSchema], settings: Settings, session: AsyncSession
+    bot: Bot, items: list[ItemSchema], settings: Settings,
+        session: AsyncSession, redis: Redis
 ) -> str:
     query = await session.execute(
         select(Item).where(Item.item_id.in_([it.item_id for it in items]))
     )
     items_db = query.scalars().all()
+    payload_id = str(secrets.randbits(32))
+
+    await redis.set(payload_id, str(items[0].item_id))
+
     invoice_link = await bot.create_invoice_link(
         title="Ваша покупка",
         description="Лучший магазин техники в мире!",
-        payload=json.dumps({"item_id": str(items[0].item_id)}),
+        payload=payload_id,
         provider_token=settings.PAYMENT_PROVIDER_TOKEN,
         currency="RUB",
         prices=await _generate_prices(items_db),

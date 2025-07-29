@@ -10,6 +10,7 @@ from app.admin import ItemAdmin, OrderAdmin, OrderItemAdmin, UserAdmin
 
 from .api.v1 import invoice, item, order, order_item, user, webhook
 from .core.config import Settings
+from .redis.session import redis_client
 from .db.models.item import Item  # type: ignore
 from .db.models.order import Order  # type: ignore
 from .db.models.order_item import OrderItem  # type: ignore
@@ -17,8 +18,7 @@ from .db.models.user import User  # type: ignore
 from .db.session import Base, engine
 
 
-async def set_webhook(bot: Bot, webhook_secret: str):
-    webhook_url = "https://g40sl192-8000.euw.devtunnels.ms/webhook"
+async def set_webhook(bot: Bot, webhook_url: str, webhook_secret: str):
     await bot.set_webhook(url=webhook_url, secret_token=webhook_secret)
 
 
@@ -26,10 +26,11 @@ async def set_webhook(bot: Bot, webhook_secret: str):
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     settings = Settings()  # type: ignore
     app.state.bot = Bot(token=settings.TG_TOKEN)
-    await set_webhook(app.state.bot, settings.WEBHOOK_SECRET)
+    await set_webhook(app.state.bot, webhook_url=settings.WEBHOOK_URL, webhook_secret=settings.WEBHOOK_SECRET)
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
     yield
+    await redis_client.close()
     await engine.dispose()
 
 
