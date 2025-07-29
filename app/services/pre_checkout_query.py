@@ -9,10 +9,9 @@ from app.db.models.order_item import OrderItem
 from app.db.models.user import User
 from app.db.session import async_session_maker
 from app.schemas.item import ItemsID
-from app.dependencies import get_redis_session
 
 
-async def save_pre_checkout_query_info(pre_checkout_query: PreCheckoutQuery):
+async def save_pre_checkout_query_info(pre_checkout_query: PreCheckoutQuery, redis: Redis):
     async with async_session_maker() as session:
         try:
             async with session.begin():
@@ -22,7 +21,6 @@ async def save_pre_checkout_query_info(pre_checkout_query: PreCheckoutQuery):
                 )
                 invoice_payload = pre_checkout_query.invoice_payload
 
-                redis: Redis = await get_redis_session()
                 item_id = await redis.get(invoice_payload)
 
                 item = await _get_item(
