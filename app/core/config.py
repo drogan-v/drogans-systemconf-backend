@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     PAYMENT_PROVIDER_TOKEN: str = Field()
     WEBHOOK_SECRET: str = Field()
     PAYLOAD_SECRET: str = Field()
+    WEBHOOK_URL: str = Field()
 
     POSTGRES_USER: str = Field()
     POSTGRES_DB: str = Field()

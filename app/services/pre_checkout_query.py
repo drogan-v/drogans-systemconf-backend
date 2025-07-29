@@ -1,5 +1,4 @@
-import json
-
+from redis.asyncio.client import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 from telegram import OrderInfo, PreCheckoutQuery
 from telegram import User as TgUser
@@ -9,8 +8,8 @@ from app.db.models.order import Order
 from app.db.models.order_item import OrderItem
 from app.db.models.user import User
 from app.db.session import async_session_maker
-from app.redis.session import get_redis_session
 from app.schemas.item import ItemsID
+from app.dependencies import get_redis_session
 
 
 async def save_pre_checkout_query_info(pre_checkout_query: PreCheckoutQuery):
@@ -22,8 +21,9 @@ async def save_pre_checkout_query_info(pre_checkout_query: PreCheckoutQuery):
                     pre_checkout_query.order_info, user, session
                 )
                 invoice_payload = pre_checkout_query.invoice_payload
-                async for redis in get_redis_session():
-                    item_id = await redis.get(invoice_payload)
+
+                redis: Redis = await get_redis_session()
+                item_id = await redis.get(invoice_payload)
 
                 item = await _get_item(
                     ItemsID(item_id=item_id), session

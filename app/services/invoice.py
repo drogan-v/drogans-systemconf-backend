@@ -1,14 +1,13 @@
-import json
 import secrets
 
 from typing import Sequence
 
+from redis.asyncio.client import Redis
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from telegram import Bot, LabeledPrice
 
-from app.redis.session import get_redis_session
-
+from app.dependencies import get_redis_session
 from app.core.config import Settings
 from app.db.models.item import Item
 from app.schemas.item import Item as ItemSchema
@@ -26,8 +25,8 @@ async def generate_invoice_link(
         "payload": secrets.randbits(32)
     }
 
-    async for redis in get_redis_session():
-        await redis.set(json_payload["payload"], json_payload["item_id"])
+    redis: Redis = await get_redis_session()
+    await redis.set(json_payload["payload"], json_payload["item_id"])
 
     invoice_link = await bot.create_invoice_link(
         title="Ваша покупка",
